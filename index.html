@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico Digital | MR3 Comunicação</title>
+<meta name="description" content="Questionário gratuito de diagnóstico digital da MR3 Comunicação.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --card: #ffffff;
+    --ink: #14161a;
+    --muted: #5d6470;
+    --line: #e2e5ea;
+    --brand: #1D4A96;
+    --brand-soft: #e8eef8;
+    --accent: #E85A00;
+    --accent-ink: #ffffff;
+    --accent-soft: #fdefe5;
+    --error: #c62828;
+    --ok: #2e7d32;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+
+  header.hero {
+    background: var(--brand);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::after {
+    content: "";
+    position: absolute; right: -60px; top: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: var(--accent); opacity: .9;
+  }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: #ffc9a6; position: relative; z-index: 1;
+  }
+  .hero h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin: 10px 0 12px; position: relative; z-index: 1; max-width: 80%; }
+  .hero p { margin: 0; color: #d6e0f2; max-width: 560px; position: relative; z-index: 1; }
+  .tags { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; position: relative; z-index: 1; }
+  .tag { font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.1); }
+  .tag.free { background: var(--accent); }
+
+  .progress { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 14px 0 10px; }
+  .progress-bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0; background: var(--brand); transition: width .3s ease; }
+  .progress-label { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  .intro { color: var(--muted); margin: 8px 4px 16px; }
+
+  fieldset.q {
+    border: 1px solid var(--line); background: var(--card); border-radius: var(--radius);
+    padding: 22px 22px 18px; margin: 0 0 14px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  fieldset.q:focus-within { border-color: #c9ced6; box-shadow: 0 2px 12px rgba(20,22,26,.06); }
+  fieldset.q.invalid { border-color: var(--error); }
+  legend { padding: 0; float: left; width: 100%; font-weight: 700; font-size: 17px; margin-bottom: 14px; }
+  legend .n { color: var(--brand); margin-right: 6px; }
+  .q > *:not(legend) { clear: both; }
+
+  input[type=text], input[type=tel] {
+    width: 100%; font: inherit; font-size: 16px;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: #fbfbfc; color: var(--ink); outline: none;
+    transition: border-color .15s, background .15s;
+  }
+  input[type=text]:focus, input[type=tel]:focus { border-color: var(--accent); background: #fff; }
+
+  .options { display: grid; gap: 8px; }
+  .opt { position: relative; }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt label {
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: #fbfbfc; transition: border-color .15s, background .15s;
+  }
+  .opt label::before {
+    content: ""; flex: 0 0 18px; height: 18px; border-radius: 50%;
+    border: 2px solid #b8bec8; background: #fff; transition: all .15s;
+  }
+  .opt label:hover { border-color: #c9ced6; background: #fff; }
+  .opt input:checked + label { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .opt input:checked + label::before { border-color: var(--accent); box-shadow: inset 0 0 0 4px #fff; background: var(--accent); }
+  .opt input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .err { color: var(--error); font-size: 13px; margin-top: 8px; display: none; }
+  .invalid .err { display: block; }
+
+  .hp { position: absolute; left: -9999px; }
+
+  button[type=submit] {
+    width: 100%; font: inherit; font-weight: 700; font-size: 17px;
+    padding: 16px; border: 0; border-radius: 12px; cursor: pointer;
+    background: var(--accent); color: var(--accent-ink); margin-top: 8px;
+    transition: filter .15s, transform .05s;
+  }
+  button[type=submit]:hover { filter: brightness(1.06); }
+  button[type=submit]:active { transform: translateY(1px); }
+  button[type=submit][disabled] { opacity: .6; cursor: wait; }
+  .form-msg { text-align: center; font-size: 14px; margin-top: 12px; min-height: 20px; }
+  .form-msg.error { color: var(--error); }
+  .privacy { text-align: center; font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  .thanks {
+    display: none; text-align: center; background: var(--card);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 48px 24px; margin-top: 16px;
+  }
+  .thanks .check {
+    width: 64px; height: 64px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+    display: grid; place-items: center; margin: 0 auto 16px; font-size: 32px; font-weight: 800;
+  }
+  .thanks h2 { margin: 0 0 8px; }
+  .thanks p { color: var(--muted); margin: 0; }
+
+  footer { text-align: center; font-size: 12px; color: var(--muted); margin-top: 32px; }
+
+  @media (max-width: 480px) {
+    header.hero { padding: 28px 20px; }
+    header.hero::after { width: 140px; height: 140px; right: -50px; top: -50px; }
+    fieldset.q { padding: 18px 16px 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">MR3 Comunicação | Diagnóstico Digital</div>
+    <h1>Conheça melhor sua empresa</h1>
+    <p>O objetivo é entender como sua empresa utiliza as redes sociais e identificar oportunidades para melhorar sua comunicação e atrair mais clientes.</p>
+    <div class="tags"><span class="tag">Questionário de diagnóstico</span><span class="tag free">Gratuito</span></div>
+  </header>
+
+  <div id="formArea">
+    <div class="progress" aria-hidden="true">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 de 10 respondidas</div>
+    </div>
+
+    <p class="intro">Preencha as perguntas para que a equipe MR3 possa conhecer melhor sua empresa.</p>
+
+    <form id="form" novalidate>
+      <!-- Honeypot anti-spam (invisível para pessoas) -->
+      <div class="hp" aria-hidden="true"><label>Site <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div id="questions"></div>
+      <button type="submit" id="submitBtn">Enviar respostas</button>
+      <div class="form-msg" id="formMsg" role="status"></div>
+      <p class="privacy">Suas informações serão usadas apenas pela equipe MR3 para entrar em contato com você.</p>
+    </form>
+  </div>
+
+  <section class="thanks" id="thanks" role="status">
+    <div class="check">✓</div>
+    <h2>Respostas enviadas!</h2>
+    <p>Obrigado por participar. Em breve a equipe MR3 entrará em contato pelo WhatsApp informado.</p>
+  </section>
+
+  <footer>© MR3 Comunicação</footer>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO: cole aqui a URL do Google Apps Script (veja LEIA-ME.md)
+   ===================================================================== */
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbxlJuqWmJVrH-ahVhYAc2yZ_GISyZq7VLZhgnlaHPhEZVXhb4Z11AIkcxWrBcMdQFnw/exec";
+
+const QUESTIONS = [
+  { id: "empresa",   type: "text", label: "Qual é o nome da sua empresa?", autocomplete: "organization" },
+  { id: "instagram", type: "text", label: "Qual é o Instagram da sua empresa?", placeholder: "@suaempresa" },
+  { id: "segmento",  type: "text", label: "Qual é o segmento de atuação da empresa?", placeholder: "Ex.: restaurante, clínica, loja de roupas…" },
+  { id: "responsavel", type: "radio", label: "Atualmente, quem cuida das redes sociais da empresa?", options: [
+    "Eu mesmo(a)", "Um funcionário da empresa", "Uma agência de marketing", "Um profissional freelancer", "Não temos ninguém responsável" ] },
+  { id: "objetivo", type: "radio", label: "Qual é o seu principal objetivo com as redes sociais?", options: [
+    "Atrair novos clientes", "Aumentar as vendas", "Fortalecer a marca e o posicionamento", "Divulgar produtos e serviços", "Melhorar o relacionamento com clientes", "Todas as opções" ] },
+  { id: "dificuldade", type: "radio", label: "Qual é sua maior dificuldade atualmente no Instagram?", options: [
+    "Falta de tempo para produzir conteúdo", "Pouco engajamento e alcance", "Dificuldade para criar posts e stories", "Não consigo atrair clientes pelo Instagram", "Falta de estratégia e planejamento", "Não sei como utilizar a rede social" ] },
+  { id: "frequencia", type: "radio", label: "Com que frequência sua empresa publica conteúdos?", options: [
+    "Todos os dias", "De 3 a 4 vezes por semana", "Uma ou duas vezes por semana", "Raramente", "Não temos frequência definida" ] },
+  { id: "interesse", type: "radio", label: "Você teria interesse em conhecer um serviço profissional de gerenciamento de redes sociais?", options: [
+    "Sim, tenho interesse", "Gostaria de conhecer melhor", "Talvez futuramente", "No momento, não" ] },
+  { id: "nome",     type: "text", label: "Qual é seu nome?", autocomplete: "name" },
+  { id: "whatsapp", type: "tel",  label: "Qual é seu WhatsApp para contato?", placeholder: "(00) 00000-0000", autocomplete: "tel" },
+];
+
+const $ = (s, el = document) => el.querySelector(s);
+const container = $("#questions");
+
+QUESTIONS.forEach((q, i) => {
+  const fs = document.createElement("fieldset");
+  fs.className = "q";
+  fs.dataset.id = q.id;
+  let html = `<legend><span class="n">${i + 1}.</span>${q.label}</legend>`;
+  if (q.type === "radio") {
+    html += `<div class="options">` + q.options.map((o, j) =>
+      `<div class="opt"><input type="radio" id="${q.id}_${j}" name="${q.id}" value="${o}"><label for="${q.id}_${j}">${o}</label></div>`
+    ).join("") + `</div>`;
+  } else {
+    html += `<input type="${q.type}" id="${q.id}" name="${q.id}" aria-label="${q.label}"`
+      + (q.placeholder ? ` placeholder="${q.placeholder}"` : "")
+      + (q.autocomplete ? ` autocomplete="${q.autocomplete}"` : "")
+      + (q.type === "tel" ? ` inputmode="tel" maxlength="16"` : ` maxlength="200"`) + `>`;
+  }
+  html += `<div class="err">${q.id === "whatsapp" ? "Informe um WhatsApp válido com DDD." : q.type === "radio" ? "Escolha uma opção." : "Campo obrigatório."}</div>`;
+  fs.innerHTML = html;
+  container.appendChild(fs);
+});
+
+const form = $("#form");
+
+// Máscara de telefone: (00) 00000-0000
+const tel = $("#whatsapp");
+tel.addEventListener("input", () => {
+  let d = tel.value.replace(/\D/g, "").slice(0, 11);
+  let out = d;
+  if (d.length > 2) out = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length > 7) out = `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  tel.value = out;
+});
+
+function getValue(q) {
+  if (q.type === "radio") {
+    const c = form.querySelector(`input[name="${q.id}"]:checked`);
+    return c ? c.value : "";
+  }
+  return form.elements[q.id].value.trim();
+}
+function isValid(q) {
+  const v = getValue(q);
+  if (!v) return false;
+  if (q.id === "whatsapp") return v.replace(/\D/g, "").length >= 10;
+  return true;
+}
+function updateProgress() {
+  const n = QUESTIONS.filter(isValid).length;
+  $("#progressFill").style.width = (n / QUESTIONS.length * 100) + "%";
+  $("#progressLabel").textContent = `${n} de ${QUESTIONS.length} respondidas`;
+}
+form.addEventListener("input", e => {
+  updateProgress();
+  const fs = e.target.closest("fieldset.q");
+  if (fs && fs.classList.contains("invalid")) {
+    const q = QUESTIONS.find(x => x.id === fs.dataset.id);
+    if (isValid(q)) fs.classList.remove("invalid");
+  }
+});
+form.addEventListener("change", updateProgress);
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("#formMsg");
+  msg.textContent = ""; msg.className = "form-msg";
+
+  let firstBad = null;
+  QUESTIONS.forEach(q => {
+    const fs = form.querySelector(`fieldset[data-id="${q.id}"]`);
+    const ok = isValid(q);
+    fs.classList.toggle("invalid", !ok);
+    if (!ok && !firstBad) firstBad = fs;
+  });
+  if (firstBad) {
+    firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+    const f = firstBad.querySelector("input"); if (f) setTimeout(() => f.focus({ preventScroll: true }), 300);
+    msg.textContent = "Responda todas as perguntas para enviar.";
+    msg.classList.add("error");
+    return;
+  }
+
+  // Honeypot preenchido = robô. Finge sucesso.
+  if (form.elements.website.value) return showThanks();
+
+  const data = {};
+  QUESTIONS.forEach(q => data[q.id] = getValue(q));
+  data.pagina = location.href;
+
+  const btn = $("#submitBtn");
+  btn.disabled = true; btn.textContent = "Enviando…";
+
+  try {
+    if (!ENDPOINT) {
+      throw new Error("ENDPOINT não configurado no index.html — respostas NÃO foram salvas.");
+    } else {
+      // text/plain evita o "preflight" CORS que o Apps Script não suporta
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!json.ok) throw new Error("Planilha não confirmou o recebimento: " + JSON.stringify(json));
+    }
+    showThanks();
+  } catch (err) {
+    console.error(err);
+    msg.textContent = "Não foi possível enviar. Verifique sua conexão e tente novamente.";
+    msg.classList.add("error");
+    btn.disabled = false; btn.textContent = "Enviar respostas";
+  }
+});
+
+function showThanks() {
+  $("#formArea").style.display = "none";
+  $("#thanks").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+</body>
+</html>
